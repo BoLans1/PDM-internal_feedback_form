@@ -31,95 +31,55 @@
     .yesno-option{ display:flex; align-items:center; gap:8px; font-weight:500; }
     .actions{ margin-top:26px; display:flex; align-items:center; gap:14px; }
     button[type="submit"]{ display:inline-flex; align-items:center; gap:8px; padding:14px 22px; font-family:inherit; font-weight:700; font-size:1em; color:var(--io-white); background:var(--io-primary); border:none; border-radius:9999px; cursor:pointer; transition:background .18s, box-shadow .18s, transform .18s; }
-    button[type="submit"]::after{ content:"→"; transition: transform .18s; }
-    button[type="submit"]:hover, button[type="submit"]:focus { background:var(--io-primary-hover); box-shadow:0 6px 24px var(--io-primary-15); outline:none; }
-    button[type="submit"].loading{ opacity:.8; pointer-events:none; }
-    button[type="submit"].loading::after{ content:"⏳"; transform:none; }
-    .msg{ display:none; padding:12px 14px; border-radius:8px; font-weight:600; }
-    .msg.ok{ display:none; background:#e4f3e1; color:#135c29; }
-    .msg.err{ display:none; background:#fde8e8; color:#7a1e1e; }
+    button[type="submit"].loading{ opacity:.8; cursor:progress; }
+    .msg{ display:none; margin-top:14px; font-weight:600; }
     .msg.show{ display:block; }
-    footer{ max-width:680px; margin:16px auto 0; color:#6a6a6a; font-size:.9em; }
-    @media (max-width:640px){ #feedbackForm{ padding:28px 20px; } }
+    .msg.ok{ color:var(--io-ok); }
+    .msg.err{ color:var(--io-error); }
+    .dim-block{ border:1px dashed var(--io-border); padding:14px; border-radius:10px; margin-top:8px; }
   </style>
 </head>
 <body>
-  <form id="feedbackForm" novalidate>
-    <h1>Feedback geven over collega</h1>
-    <p class="sub">Interne registratie, verstuurd naar de PDM-workflow (n8n). Alleen voor iO-medewerkers.</p>
+  <form id="feedbackForm">
+    <h1>Interne feedback</h1>
+    <p class="sub">De velden die je ziet zijn afgestemd op je rol.</p>
 
-    <label>Jouw rol <span class="required">*</span></label>
-    <select name="gever_rol" id="gever_rol" class="rolselect" required>
-      <option value="">-- Kies een rol --</option>
-      <option>Delivery Manager</option>
+    <label for="gever_naam">Jouw naam<span class="required">*</span></label>
+    <input id="gever_naam" name="gever_naam" type="text" autocomplete="name" required>
+
+    <label for="gever_rol" class="rolselect">Jouw rol<span class="required">*</span></label>
+    <select id="gever_rol" name="gever_rol" required>
+      <option value="">Maak een keuze…</option>
       <option>Project Manager</option>
-      <option>Peer</option>
-      <option>Domain Lead</option>
+      <option>Delivery Manager</option>
+      <option>Architect</option>
+      <option>Modelleur</option>
+      <option>Ontwikkelaar</option>
+      <option>Tester</option>
+      <option>Designer</option>
+      <option>Overig</option>
     </select>
 
-    <label for="coachee_naam">Aan wie geef je feedback? (Volledige naam collega/ontvanger) <span class="required">*</span></label>
-    <input type="text" name="coachee_naam" id="coachee_naam" required autocomplete="off" placeholder="Volledige naam collega">
+    <!-- Hidden shared_secret for internal identification -->
+    <input type="hidden" name="shared_secret" value="5102901c87716e8341abe60afacbee716d34a59990d69a9ccb249bea69925d59">
 
-    <label>Jouw naam <span class="required">*</span></label>
-    <input type="text" name="gever_naam" required autocomplete="off" placeholder="Jouw volledige naam">
+    <div class="dim-block" data-roles="Project Manager, Delivery Manager">
+      <label>Is deze feedback gedeeld met de medewerker binnen de opdracht?<a class="tooltip" tabindex="0" aria-label="Uitleg" data-tip="Stimuleert transparante feedback richting de coachee.">?</a></label>
+      <div class="yesno-group">
+        <label class="yesno-option"><input type="radio" name="feedback_gedeeld_met_coachee" value="Ja"> Ja</label>
+        <label class="yesno-option"><input type="radio" name="feedback_gedeeld_met_coachee" value="Nee"> Nee</label>
+      </div>
+    </div>
 
-    <label>Datum feedback (optioneel)</label>
-    <input type="date" name="datum_feedback">
+    <label for="context">Context of achtergrond</label>
+    <textarea id="context" name="context" placeholder="Beschrijf kort de context (opdracht, team, deliverables)…"></textarea>
 
-    <!-- Rol-afhankelijke feedback velden; toggled via data-roles -->
-    <div id="veldcollega">
-      <div class="dim-block" data-roles="Delivery Manager,Project Manager,Peer,Domain Lead">
-        <label>Verwachtingen (Expectations)
-          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Heeft de medewerker voldaan aan de verwachtingen?">i</a>
-        </label>
-        <textarea name="Expectations" rows="2"></textarea>
-      </div>
-      <div class="dim-block" data-roles="Delivery Manager">
-        <label>Kernwaarden (Core Values)
-          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Werkt en handelt de collega in lijn met onze kernwaarden?">i</a>
-        </label>
-        <textarea name="Core Values" rows="2"></textarea>
-      </div>
-      <div class="dim-block" data-roles="Delivery Manager,Project Manager,Domain Lead">
-        <label>Competenties (Competence)
-          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Denkt de feedbackgever dat de medewerker voldoende skills en kennis heeft om de opdracht goed uit te voeren?">i</a>
-        </label>
-        <textarea name="Competence" rows="2"></textarea>
-      </div>
-      <div class="dim-block" data-roles="Delivery Manager,Project Manager,Peer">
-        <label>Prestaties (Performance)
-          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Hoe presteert de medewerker in de opdracht(en), in rol en functie? Zijn de doelen behaald? Wat en hoe?">i</a>
-        </label>
-        <textarea name="Performance" rows="2"></textarea>
-      </div>
-      <div class="dim-block" data-roles="Delivery Manager,Project Manager,Domain Lead">
-        <label>Potentieel (Potential)
-          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Heeft de medewerker potentieel om door te groeien? Zo ja, naar welke rol?">i</a>
-        </label>
-        <textarea name="Potential" rows="2"></textarea>
-      </div>
-      <div class="dim-block" data-roles="Delivery Manager,Project Manager">
-        <label>Eindoordeel (Overall)
-          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Beoordeel op de schaal Poor · Needs Improvement · Good · Very Good · Outstanding.">i</a>
-        </label>
-        <select name="overall_score">
-          <option value="">-- Selecteer --</option>
-          <option>Poor</option>
-          <option>Needs Improvement</option>
-          <option>Good</option>
-          <option>Very Good</option>
-          <option>Outstanding</option>
-        </select>
-      </div>
-      <div class="dim-block" data-roles="Delivery Manager,Project Manager">
-        <label>Is deze feedback gedeeld met de medewerker binnen de opdracht? <span class="required">*</span>
-          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Als DM of PM is het verplicht om je feedback eerst met de medewerker te delen voordat je deze registreert.">i</a>
-        </label>
-        <div class="yesno-group">
-          <label class="yesno-option"><input type="radio" name="feedback_gedeeld_met_coachee" value="true"> Ja</label>
-          <label class="yesno-option"><input type="radio" name="feedback_gedeeld_met_coachee" value="false"> Nee</label>
-        </div>
-      </div>
+    <label for="feedback">Feedback</label>
+    <textarea id="feedback" name="feedback" placeholder="Beschrijf wat goed ging en wat beter kan…"></textarea>
+
+    <div class="dim-block" data-roles="Architect, Modelleur, Ontwikkelaar, Tester, Designer">
+      <label for="tools">Tools/stack</label>
+      <input id="tools" name="tools" type="text" placeholder="Bijv. Revit, Azure DevOps, Playwright…">
     </div>
 
     <div class="actions">
