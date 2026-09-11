@@ -35,52 +35,48 @@
     .msg{ display:none; margin-top:14px; font-weight:600; }
     .msg.show{ display:block; }
     .msg.ok{ color:var(--io-ok); }
-    .msg.err{ color:var(--io-error); }
-    .dim-block{ border:1px dashed var(--io-border); padding:14px; border-radius:10px; margin-top:8px; }
   </style>
 </head>
 <body>
-  <form id="feedbackForm">
-    <h1>Interne feedback</h1>
-    <p class="sub">De velden die je ziet zijn afgestemd op je rol.</p>
+  <form id="feedbackForm" novalidate>
+    <h1>Intern feedbackformulier</h1>
+    <p class="sub">Deel constructieve feedback over je collega en opdracht.</p>
 
-    <label for="gever_naam">Jouw naam<span class="required">*</span></label>
-    <input id="gever_naam" name="gever_naam" type="text" autocomplete="name" required>
+    <!-- Hidden fields for authentication and variant -->
+    <input type="hidden" name="shared_secret" value="5102901c87716e8341abe60afacbee716d34a59990d69a9ccb249bea69925d59">
+    <input type="hidden" name="form_variant" value="internal">
 
-    <label for="gever_rol" class="rolselect">Jouw rol<span class="required">*</span></label>
-    <select id="gever_rol" name="gever_rol" required>
-      <option value="">Maak een keuze…</option>
-      <option>Project Manager</option>
+    <label for="gever_naam">Jouw naam <span class="required">*</span></label>
+    <input name="gever_naam" type="text" placeholder="Voornaam Achternaam" required>
+
+    <label for="gever_rol" class="rolselect">Jouw rol <span class="required">*</span></label>
+    <select id="gever_rol" name="gever_rol">
+      <option value="">-- Kies rol --</option>
       <option>Delivery Manager</option>
-      <option>Architect</option>
-      <option>Modelleur</option>
-      <option>Ontwikkelaar</option>
-      <option>Tester</option>
-      <option>Designer</option>
-      <option>Overig</option>
+      <option>Project Manager</option>
+      <option>Coach</option>
+      <option>Collega binnen iO</option>
     </select>
 
-    <!-- Hidden shared_secret for internal identification -->
-    <input type="hidden" name="shared_secret" value="5102901c87716e8341abe60afacbee716d34a59990d69a9ccb249bea69925d59">
-
-    <div class="dim-block" data-roles="Project Manager, Delivery Manager">
-      <label>Is deze feedback gedeeld met de medewerker binnen de opdracht?<a class="tooltip" tabindex="0" aria-label="Uitleg" data-tip="Stimuleert transparante feedback richting de coachee.">?</a></label>
+    <div class="dim-block" data-roles="Delivery Manager, Project Manager">
+      <label>Is deze feedback gedeeld met de medewerker?<span class="required">*</span></label>
       <div class="yesno-group">
         <label class="yesno-option"><input type="radio" name="feedback_gedeeld_met_coachee" value="Ja"> Ja</label>
         <label class="yesno-option"><input type="radio" name="feedback_gedeeld_met_coachee" value="Nee"> Nee</label>
       </div>
     </div>
 
-    <label for="context">Context of achtergrond</label>
-    <textarea id="context" name="context" placeholder="Beschrijf kort de context (opdracht, team, deliverables)…"></textarea>
+    <label>Context van de opdracht</label>
+    <textarea name="context" rows="2"></textarea>
 
-    <label for="feedback">Feedback</label>
-    <textarea id="feedback" name="feedback" placeholder="Beschrijf wat goed ging en wat beter kan…"></textarea>
+    <label>Sterke punten</label>
+    <textarea name="sterke_punten" rows="2"></textarea>
 
-    <div class="dim-block" data-roles="Architect, Modelleur, Ontwikkelaar, Tester, Designer">
-      <label for="tools">Tools/stack</label>
-      <input id="tools" name="tools" type="text" placeholder="Bijv. Revit, Azure DevOps, Playwright…">
-    </div>
+    <label>Verbeterpunten</label>
+    <textarea name="verbeterpunten" rows="2"></textarea>
+
+    <label>Gebruikte tools</label>
+    <input name="tools" type="text" placeholder="Bijv. Revit, Azure DevOps, Playwright…">
 
     <div class="actions">
       <button type="submit" id="submitBtn">Verstuur feedback</button>
