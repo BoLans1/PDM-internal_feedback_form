@@ -1,0 +1,214 @@
+<!-- iO PDM – Intern feedbackformulier (rol-gestuurd) -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>iO PDM · Intern feedbackformulier</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
+    :root { --io-primary:#365fd9; --io-primary-15:rgba(54,95,217,0.15); --io-primary-hover:#2a4bb8; --io-text:#2b2b2b; --io-bg:#f5f3ef; --io-white:#ffffff; --io-border:#e8e8e8; --io-error:#d94040; --io-ok:#1b8837; }
+    * { box-sizing:border-box; }
+    body { font-family:'Manrope',system-ui,-apple-system,Segoe UI,sans-serif; font-weight:400; line-height:1.65; color:var(--io-text); background:var(--io-bg); margin:0; padding:2em 1em; }
+    #feedbackForm { max-width:680px; margin:0 auto; padding:40px 32px; background:var(--io-white); border-radius:16px; box-shadow:0 4px 24px rgba(43,43,43,0.06); }
+    h1 { font-weight:800; font-size:1.75em; letter-spacing:-0.02em; color:var(--io-text); margin:0 0 6px 0; }
+    p.sub { margin:0 0 28px 0; color:#6a6a6a; }
+    label { display:block; margin:22px 0 8px; font-weight:600; font-size:.95em; color:var(--io-text); }
+    select,input,textarea { width:100%; padding:12px 14px; font-family:inherit; font-size:1em; color:var(--io-text); background:var(--io-white); border:1.5px solid var(--io-border); border-radius:8px; transition:border-color .18s, box-shadow .18s; }
+    input:focus,select:focus,textarea:focus { outline:none; border-color:var(--io-primary); box-shadow:0 0 0 4px var(--io-primary-15); }
+    textarea{ resize:vertical; min-height:72px; }
+    .required{ color:var(--io-error); font-weight:700; margin-left:2px; }
+    .rolselect{ margin-bottom:10px; }
+    .tooltip{ position:relative; display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; margin-left:6px; border-radius:50%; background:var(--io-border); color:var(--io-text); font-size:.78em; font-weight:700; text-decoration:none; cursor:help; vertical-align:middle; }
+    .tooltip:hover,.tooltip:focus{ background:var(--io-primary); color:var(--io-white); outline:none; }
+    .tooltip::after{ content:attr(data-tip); position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%); min-width:220px; max-width:320px; padding:10px 12px; background:var(--io-text); color:var(--io-white); font-size:.85em; font-weight:400; line-height:1.5; border-radius:6px; box-shadow:0 6px 20px rgba(0,0,0,.15); opacity:0; pointer-events:none; transition:opacity .15s; z-index:10; white-space:normal; text-align:left; }
+    .tooltip::before{ content:""; position:absolute; bottom:calc(100% + 2px); left:50%; transform:translateX(-50%); border:6px solid transparent; border-top-color:var(--io-text); opacity:0; transition:opacity .15s; }
+    .tooltip:hover::after,.tooltip:focus::after,.tooltip:hover::before,.tooltip:focus::before{ opacity:1; }
+    .hidden{ display:none; }
+    .small{ font-size:.88em; color:#6a6a6a; font-weight:400; }
+    .yesno-group{ display:flex; gap:16px; }
+    .yesno-option{ display:flex; align-items:center; gap:8px; font-weight:500; }
+    .actions{ margin-top:26px; display:flex; align-items:center; gap:14px; }
+    button[type="submit"]{ display:inline-flex; align-items:center; gap:8px; padding:14px 22px; font-family:inherit; font-weight:700; font-size:1em; color:var(--io-white); background:var(--io-primary); border:none; border-radius:9999px; cursor:pointer; transition:background .18s, box-shadow .18s, transform .18s; }
+    button[type="submit"]::after{ content:"→"; transition: transform .18s; }
+    button[type="submit"]:hover, button[type="submit"]:focus { background:var(--io-primary-hover); box-shadow:0 6px 24px var(--io-primary-15); outline:none; }
+    button[type="submit"].loading{ opacity:.8; pointer-events:none; }
+    button[type="submit"].loading::after{ content:"⏳"; transform:none; }
+    .msg{ display:none; padding:12px 14px; border-radius:8px; font-weight:600; }
+    .msg.ok{ display:none; background:#e4f3e1; color:#135c29; }
+    .msg.err{ display:none; background:#fde8e8; color:#7a1e1e; }
+    .msg.show{ display:block; }
+    footer{ max-width:680px; margin:16px auto 0; color:#6a6a6a; font-size:.9em; }
+    @media (max-width:640px){ #feedbackForm{ padding:28px 20px; } }
+  </style>
+</head>
+<body>
+  <form id="feedbackForm" novalidate>
+    <h1>Feedback geven over collega</h1>
+    <p class="sub">Interne registratie, verstuurd naar de PDM-workflow (n8n). Alleen voor iO-medewerkers.</p>
+
+    <label>Jouw rol <span class="required">*</span></label>
+    <select name="gever_rol" id="gever_rol" class="rolselect" required>
+      <option value="">-- Kies een rol --</option>
+      <option>Delivery Manager</option>
+      <option>Project Manager</option>
+      <option>Peer</option>
+      <option>Domain Lead</option>
+    </select>
+
+    <label for="coachee_naam">Aan wie geef je feedback? (Volledige naam collega/ontvanger) <span class="required">*</span></label>
+    <input type="text" name="coachee_naam" id="coachee_naam" required autocomplete="off" placeholder="Volledige naam collega">
+
+    <label>Jouw naam <span class="required">*</span></label>
+    <input type="text" name="gever_naam" required autocomplete="off" placeholder="Jouw volledige naam">
+
+    <label>Datum feedback (optioneel)</label>
+    <input type="date" name="datum_feedback">
+
+    <!-- Rol-afhankelijke feedback velden; toggled via data-roles -->
+    <div id="veldcollega">
+      <div class="dim-block" data-roles="Delivery Manager,Project Manager,Peer,Domain Lead">
+        <label>Verwachtingen (Expectations)
+          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Heeft de medewerker voldaan aan de verwachtingen?">i</a>
+        </label>
+        <textarea name="Expectations" rows="2"></textarea>
+      </div>
+      <div class="dim-block" data-roles="Delivery Manager">
+        <label>Kernwaarden (Core Values)
+          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Werkt en handelt de collega in lijn met onze kernwaarden?">i</a>
+        </label>
+        <textarea name="Core Values" rows="2"></textarea>
+      </div>
+      <div class="dim-block" data-roles="Delivery Manager,Project Manager,Domain Lead">
+        <label>Competenties (Competence)
+          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Denkt de feedbackgever dat de medewerker voldoende skills en kennis heeft om de opdracht goed uit te voeren?">i</a>
+        </label>
+        <textarea name="Competence" rows="2"></textarea>
+      </div>
+      <div class="dim-block" data-roles="Delivery Manager,Project Manager,Peer">
+        <label>Prestaties (Performance)
+          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Hoe presteert de medewerker in de opdracht(en), in rol en functie? Zijn de doelen behaald? Wat en hoe?">i</a>
+        </label>
+        <textarea name="Performance" rows="2"></textarea>
+      </div>
+      <div class="dim-block" data-roles="Delivery Manager,Project Manager,Domain Lead">
+        <label>Potentieel (Potential)
+          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Heeft de medewerker potentieel om door te groeien? Zo ja, naar welke rol?">i</a>
+        </label>
+        <textarea name="Potential" rows="2"></textarea>
+      </div>
+      <div class="dim-block" data-roles="Delivery Manager,Project Manager">
+        <label>Eindoordeel (Overall)
+          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Beoordeel op de schaal Poor · Needs Improvement · Good · Very Good · Outstanding.">i</a>
+        </label>
+        <select name="overall_score">
+          <option value="">-- Selecteer --</option>
+          <option>Poor</option>
+          <option>Needs Improvement</option>
+          <option>Good</option>
+          <option>Very Good</option>
+          <option>Outstanding</option>
+        </select>
+      </div>
+      <div class="dim-block" data-roles="Delivery Manager,Project Manager">
+        <label>Is deze feedback gedeeld met de medewerker binnen de opdracht? <span class="required">*</span>
+          <a class="tooltip" tabindex="0" aria-label="Meer info" data-tip="Als DM of PM is het verplicht om je feedback eerst met de medewerker te delen voordat je deze registreert.">i</a>
+        </label>
+        <div class="yesno-group">
+          <label class="yesno-option"><input type="radio" name="feedback_gedeeld_met_coachee" value="true"> Ja</label>
+          <label class="yesno-option"><input type="radio" name="feedback_gedeeld_met_coachee" value="false"> Nee</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" id="submitBtn">Verstuur feedback</button>
+      <span id="status" aria-live="polite" class="small"></span>
+    </div>
+    <div id="msgOk" class="msg ok" role="status">Bedankt! Je feedback is veilig ontvangen.</div>
+    <div id="msgErr" class="msg err" role="alert">Verzenden mislukt. Probeer het later opnieuw of neem contact op met PDM.</div>
+  </form>
+
+  <footer>
+    Privacy: deze inzending wordt via een beveiligde webhook naar iO n8n gestuurd en later verwerkt in SharePoint. Er worden geen cookies geplaatst.
+  </footer>
+
+  <script>
+    const WEBHOOK_URL = 'https://workflows.iobonzai.com/webhook/pdm-feedback-intake';
+    const form = document.getElementById('feedbackForm');
+    const btn = document.getElementById('submitBtn');
+    const statusEl = document.getElementById('status');
+    const okEl = document.getElementById('msgOk');
+    const errEl = document.getElementById('msgErr');
+
+    // Rol-gestuurde velden; verborgen velden worden gewist bij rol-wissel
+    const rolSelect = document.getElementById('gever_rol');
+    const dimBlocks = document.querySelectorAll('.dim-block');
+    function updateFieldsForRole(){
+      const rol = rolSelect.value;
+      dimBlocks.forEach(block => {
+        const rollen = (block.dataset.roles || '').split(',').map(s => s.trim());
+        const zichtbaar = rol !== '' && rollen.includes(rol);
+        block.classList.toggle('hidden', !zichtbaar);
+        if (!zichtbaar) {
+          block.querySelectorAll('textarea, input:not([type=hidden]), select').forEach(el => {
+            if (el.tagName === 'SELECT') el.selectedIndex = 0;
+            else if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+            else el.value = '';
+          });
+        }
+      });
+    }
+    rolSelect.addEventListener('change', updateFieldsForRole);
+    updateFieldsForRole();
+
+    function formToJSON(frm){
+      const fd = new FormData(frm);
+      const obj = {};
+      fd.forEach((v,k) => {
+        if (obj[k]) { if (!Array.isArray(obj[k])) obj[k] = [obj[k]]; obj[k].push(v); }
+        else obj[k] = v;
+      });
+      obj._meta = { form_variant: 'internal', page_url: location.href, user_agent: navigator.userAgent };
+      return obj;
+    }
+
+    function setLoading(on){
+      if (on) { btn.classList.add('loading'); btn.disabled = true; statusEl.textContent = 'Versturen…'; }
+      else { btn.classList.remove('loading'); btn.disabled = false; statusEl.textContent = ''; }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      okEl.classList.remove('show'); errEl.classList.remove('show');
+
+      const naamField = form.querySelector('input[name="gever_naam"]');
+      if (!naamField.value.trim()) { alert('Je moet je naam invullen.'); naamField.focus(); return; }
+      const rol = rolSelect.value;
+      if (rol === 'Delivery Manager' || rol === 'Project Manager') {
+        const gedeeld = form.querySelector('input[name="feedback_gedeeld_met_coachee"]:checked');
+        if (!gedeeld) { alert('Geef aan of deze feedback is gedeeld met de medewerker binnen de opdracht.'); return; }
+      }
+
+      const payload = formToJSON(form);
+      setLoading(true);
+      try {
+        const res = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload),
+          mode: 'cors',
+          credentials: 'omit'
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        form.reset(); updateFieldsForRole();
+        okEl.classList.add('show');
+      } catch (err) {
+        console.error('Submit error', err);
+        errEl.classList.add('show');
+      } finally { setLoading(false); }
+    });
+  </script>
+</body>
+</html>
